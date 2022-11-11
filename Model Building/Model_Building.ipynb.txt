@@ -1,0 +1,396 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "collapsed_sections": []
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "code",
+      "execution_count": 1,
+      "metadata": {
+        "id": "P_eOAV7usTG7"
+      },
+      "outputs": [],
+      "source": [
+        "#Image Augmentation\n",
+        "from tensorflow.keras.preprocessing.image import ImageDataGenerator\n",
+        "rain_datagen = ImageDataGenerator(rescale=1./255,\n",
+        "                                   zoom_range=0.2,\n",
+        "                                   horizontal_flip=True)"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "#Create Model\n",
+        "#Importing req library\n",
+        "from tensorflow.keras.models import Sequential\n",
+        "from tensorflow.keras.layers import Convolution2D, MaxPooling2D, Flatten, Dense\n"
+      ],
+      "metadata": {
+        "id": "Wk6cgno1teGH"
+      },
+      "execution_count": 2,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "#Add Layers\n",
+        "model = Sequential() # Initializing sequential model\n",
+        "model.add(Convolution2D(32,(3,3),activation='relu',input_shape=(64,64,3))) # convolution layer\n",
+        "model.add(MaxPooling2D(pool_size=(2, 2))) # Max pooling layer\n",
+        "model.add(Flatten()) # Flatten layer\n",
+        "model.add(Dense(300,activation='relu')) # Hidden layer 1\n",
+        "model.add(Dense(150,activation='relu')) # Hidden layer 2\n",
+        "model.add(Dense(4,activation='softmax')) # Output layer"
+      ],
+      "metadata": {
+        "id": "Sl5ONtYTthY5"
+      },
+      "execution_count": 3,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "#Compile the model\n",
+        "model.compile(optimizer='adam',loss='categorical_crossentropy',metrics=['accuracy'])"
+      ],
+      "metadata": {
+        "id": "7yWfc4OGtn1E"
+      },
+      "execution_count": 4,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "#Save the model\n",
+        "model.save('ECG.h5')"
+      ],
+      "metadata": {
+        "id": "_t0OSCqItrDH"
+      },
+      "execution_count": 5,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "#Test the model\n",
+        "#Testing 1\n",
+        "from tensorflow.keras.preprocessing import image\n",
+        "import numpy as np\n",
+        "img = image.load_img('/content/fig_2113.png',target_size=(64,64)) # Reading image\n",
+        "x = image.img_to_array(img) \n",
+        "x = np.expand_dims(x,axis=0) \n",
+        "pred = np.argmax(model.predict(x)) \n",
+        "op = ['Normal','Left Bundle Branch Block','Right Bundle Branch Block','Premature Atrial Contraction','Premature Ventricular Contraction','Ventricular Fibrillation'] \n",
+        "op[pred] \n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 53
+        },
+        "id": "sd9cNNaCtvr5",
+        "outputId": "01f7e4ae-112e-4ea7-b953-4f48cf402383"
+      },
+      "execution_count": 7,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "1/1 [==============================] - 0s 25ms/step\n"
+          ]
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "'Normal'"
+            ],
+            "application/vnd.google.colaboratory.intrinsic+json": {
+              "type": "string"
+            }
+          },
+          "metadata": {},
+          "execution_count": 7
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "#Test the model\n",
+        "#Testing 2\n",
+        "from tensorflow.keras.preprocessing import image\n",
+        "import numpy as np\n",
+        "img = image.load_img('/content/fig_5898.png',target_size=(64,64)) # Reading image\n",
+        "x = image.img_to_array(img) \n",
+        "x = np.expand_dims(x,axis=0) \n",
+        "pred = np.argmax(model.predict(x)) \n",
+        "op = ['Left Bundle Branch Block','Normal','Right Bundle Branch Block','Premature Atrial Contraction','Premature Ventricular Contraction','Ventricular Fibrillation'] \n",
+        "op[pred] \n"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 53
+        },
+        "id": "ZXpIJ6ehu0dP",
+        "outputId": "a24c3d76-e19d-4ac6-dc06-9b5024e8ff7c"
+      },
+      "execution_count": 9,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "1/1 [==============================] - 0s 27ms/step\n"
+          ]
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "'Left Bundle Branch Block'"
+            ],
+            "application/vnd.google.colaboratory.intrinsic+json": {
+              "type": "string"
+            }
+          },
+          "metadata": {},
+          "execution_count": 9
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "#Test the model\n",
+        "#Testing 3\n",
+        "from tensorflow.keras.preprocessing import image\n",
+        "import numpy as np\n",
+        "img = image.load_img('/content/fig_12.png',target_size=(64,64)) # Reading image\n",
+        "x = image.img_to_array(img) \n",
+        "x = np.expand_dims(x,axis=0) \n",
+        "pred = np.argmax(model.predict(x)) \n",
+        "op = ['Right Bundle Branch Block','Normal','Left Bundle Branch Block','Premature Atrial Contraction','Premature Ventricular Contraction','Ventricular Fibrillation'] \n",
+        "op[pred] "
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 53
+        },
+        "id": "ulqw57l9vSfV",
+        "outputId": "37d64ea1-ea53-4a0a-f7bf-25f7207409de"
+      },
+      "execution_count": 10,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "1/1 [==============================] - 0s 25ms/step\n"
+          ]
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "'Right Bundle Branch Block'"
+            ],
+            "application/vnd.google.colaboratory.intrinsic+json": {
+              "type": "string"
+            }
+          },
+          "metadata": {},
+          "execution_count": 10
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "#Test the model\n",
+        "#Testing 4\n",
+        "from tensorflow.keras.preprocessing import image\n",
+        "import numpy as np\n",
+        "img = image.load_img('/content/fig_24.png',target_size=(64,64)) # Reading image\n",
+        "x = image.img_to_array(img) \n",
+        "x = np.expand_dims(x,axis=0) \n",
+        "pred = np.argmax(model.predict(x)) \n",
+        "op = ['Premature Atrial Contraction','Normal','Left Bundle Branch Block','Right Bundle Branch Block','Premature Ventricular Contraction','Ventricular Fibrillation'] \n",
+        "op[pred] "
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 53
+        },
+        "id": "-9-wMbACv1ct",
+        "outputId": "8714a115-a24f-4dc6-9e74-ddb2950bf766"
+      },
+      "execution_count": 12,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "1/1 [==============================] - 0s 24ms/step\n"
+          ]
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "'Premature Atrial Contraction'"
+            ],
+            "application/vnd.google.colaboratory.intrinsic+json": {
+              "type": "string"
+            }
+          },
+          "metadata": {},
+          "execution_count": 12
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "#Test the model\n",
+        "#Testing 5\n",
+        "from tensorflow.keras.preprocessing import image\n",
+        "import numpy as np\n",
+        "img = image.load_img('/content/fig_5656.png',target_size=(64,64)) # Reading image\n",
+        "x = image.img_to_array(img) \n",
+        "x = np.expand_dims(x,axis=0) \n",
+        "pred = np.argmax(model.predict(x)) \n",
+        "op = ['Premature Ventricular Contraction','Normal','Left Bundle Branch Block','Right Bundle Branch Block','Premature Atrial Contraction','Ventricular Fibrillation'] \n",
+        "op[pred] "
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 53
+        },
+        "id": "QLBWfVprwF68",
+        "outputId": "c1f82509-e306-4183-8e75-91233911e8a0"
+      },
+      "execution_count": 13,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "1/1 [==============================] - 0s 25ms/step\n"
+          ]
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "'Premature Ventricular Contraction'"
+            ],
+            "application/vnd.google.colaboratory.intrinsic+json": {
+              "type": "string"
+            }
+          },
+          "metadata": {},
+          "execution_count": 13
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "#Test the model\n",
+        "#Testing 6\n",
+        "from tensorflow.keras.preprocessing import image\n",
+        "import numpy as np\n",
+        "img = image.load_img('/content/VFEfig_122.png',target_size=(64,64)) # Reading image\n",
+        "x = image.img_to_array(img) \n",
+        "x = np.expand_dims(x,axis=0) \n",
+        "pred = np.argmax(model.predict(x)) \n",
+        "op = ['Ventricular Fibrillation','Normal','Left Bundle Branch Block','Right Bundle Branch Block','Premature Atrial Contraction','Premature Ventricular Contraction'] \n",
+        "op[pred] "
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/",
+          "height": 53
+        },
+        "id": "auzzdndHtsyM",
+        "outputId": "7cc3a747-3c4b-4d74-cc96-3725d240a1ff"
+      },
+      "execution_count": 14,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "1/1 [==============================] - 0s 31ms/step\n"
+          ]
+        },
+        {
+          "output_type": "execute_result",
+          "data": {
+            "text/plain": [
+              "'Ventricular Fibrillation'"
+            ],
+            "application/vnd.google.colaboratory.intrinsic+json": {
+              "type": "string"
+            }
+          },
+          "metadata": {},
+          "execution_count": 14
+        }
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "#Train the model\n",
+        "from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau"
+      ],
+      "metadata": {
+        "id": "enj-GORPwkdv"
+      },
+      "execution_count": 15,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "early_stop = EarlyStopping(monitor='val_accuracy', \n",
+        "                           patience=5)\n",
+        "\n",
+        "lr = ReduceLROnPlateau(monitor='val_accuaracy', \n",
+        "                       factor=0.5, \n",
+        "                       min_lr=0.00001)\n",
+        "\n",
+        "callback = [early_stop,lr]"
+      ],
+      "metadata": {
+        "id": "aQv-MsYXxQuy"
+      },
+      "execution_count": 16,
+      "outputs": []
+    }
+  ]
+}
